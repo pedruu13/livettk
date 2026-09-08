@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Jogo TikTok</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #333; color: white; font-family: sans-serif; }
+        #gameCanvas { background-color: #222; display: block; margin: 20px auto; border: 2px solid #fff; }
+        #log { text-align: center; margin-top: 10px; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Meu Sistema TikTok</h1>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="log">Aguardando eventos do TikTok...</div>
+
+    <!-- Import Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
