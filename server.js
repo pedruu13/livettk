@@ -13,41 +13,40 @@ app.use(express.static('public'));
 // IMPORTANT: Change this to your TikTok username
 let tiktokUsername = "NOME_DO_SEU_TIKTOK_AQUI"; 
 
-// Create a new wrapper object and pass the username
 let tiktokLiveConnection = new WebcastPushConnection(tiktokUsername);
 
-// Connect to the chat (streaming events)
 tiktokLiveConnection.connect().then(state => {
     console.info(`Conectado na live de ${state.roomInfo.owner.display_id}`);
 }).catch(err => {
-    console.error('Falha ao conectar. Verifique se o nome de usuário está correto e se a conta está em live.', err);
+    console.error('Falha ao conectar.', err);
 });
 
-// Listen to chat comments
+// Comentários
 tiktokLiveConnection.on('chat', data => {
-    console.log(`${data.uniqueId} comentou: ${data.comment}`);
-    // Send the comment to the web game
     io.emit('tiktok_chat', {
         user: data.uniqueId,
         comment: data.comment
     });
 });
 
-// Listen to gifts
+// Presentes
 tiktokLiveConnection.on('gift', data => {
-    if (data.giftType === 1 && !data.repeatEnd) {
-        // Presente em combo (streak)
-    } else {
-        console.log(`${data.uniqueId} enviou o presente ${data.giftName}!`);
-        io.emit('tiktok_gift', {
-            user: data.uniqueId,
-            gift: data.giftName,
-            count: data.repeatCount
-        });
-    }
+    if (data.giftType === 1 && !data.repeatEnd) return;
+    io.emit('tiktok_gift', {
+        user: data.uniqueId,
+        gift: data.giftName,
+        count: data.repeatCount
+    });
 });
 
-// Start the local web server
+// Curtidas (Likes) - NOVIDADE!
+tiktokLiveConnection.on('like', data => {
+    io.emit('tiktok_like', {
+        user: data.uniqueId,
+        count: data.likeCount
+    });
+});
+
 server.listen(3000, () => {
     console.log('Servidor rodando! Abra o navegador em: http://localhost:3000');
 });
